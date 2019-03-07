@@ -25,6 +25,13 @@
   "dependencies": {
     "express": "^4.16.4",
     "mysql": "^2.16.0",
+    "react-dom": "^16.8.4",
     "react-scripts": "^2.1.8"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
