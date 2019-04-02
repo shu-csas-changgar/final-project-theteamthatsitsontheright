@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/davis-cook98/DatabasesGroupProject#readme",
   "dependencies": {
+    "@material-ui/core": "^3.9.3",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",
