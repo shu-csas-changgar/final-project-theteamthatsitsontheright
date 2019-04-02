@@ -67,11 +67,6 @@ class Index extends React.Component {
               </Button>
             </form>
           </DialogContent>
-          <DialogActions>
-            <Button color="primary" onClick={this.handleClose}>
-              OK
-            </Button>
-          </DialogActions>
         </Dialog>
         <Typography variant="h4" gutterBottom>
           ABC Corp's Device Interface
