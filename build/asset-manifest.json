@@ -1,14 +1,11 @@
 {
-  "main.css": "/davis-cook98/DatabasesGroupProject/static/css/main.b19676d5.chunk.css",
-  "main.js": "/davis-cook98/DatabasesGroupProject/static/js/main.a7004b1d.chunk.js",
-  "main.js.map": "/davis-cook98/DatabasesGroupProject/static/js/main.a7004b1d.chunk.js.map",
+  "main.js": "/davis-cook98/DatabasesGroupProject/static/js/main.cff799c6.chunk.js",
+  "main.js.map": "/davis-cook98/DatabasesGroupProject/static/js/main.cff799c6.chunk.js.map",
   "runtime~main.js": "/davis-cook98/DatabasesGroupProject/static/js/runtime~main.c098ce1f.js",
   "runtime~main.js.map": "/davis-cook98/DatabasesGroupProject/static/js/runtime~main.c098ce1f.js.map",
-  "static/js/2.948d4d77.chunk.js": "/davis-cook98/DatabasesGroupProject/static/js/2.948d4d77.chunk.js",
-  "static/js/2.948d4d77.chunk.js.map": "/davis-cook98/DatabasesGroupProject/static/js/2.948d4d77.chunk.js.map",
+  "static/js/2.e1177bc8.chunk.js": "/davis-cook98/DatabasesGroupProject/static/js/2.e1177bc8.chunk.js",
+  "static/js/2.e1177bc8.chunk.js.map": "/davis-cook98/DatabasesGroupProject/static/js/2.e1177bc8.chunk.js.map",
   "index.html": "/davis-cook98/DatabasesGroupProject/index.html",
-  "precache-manifest.a00f05d89138827962e829264e44ebab.js": "/davis-cook98/DatabasesGroupProject/precache-manifest.a00f05d89138827962e829264e44ebab.js",
-  "service-worker.js": "/davis-cook98/DatabasesGroupProject/service-worker.js",
-  "static/css/main.b19676d5.chunk.css.map": "/davis-cook98/DatabasesGroupProject/static/css/main.b19676d5.chunk.css.map",
-  "static/media/logo.svg": "/davis-cook98/DatabasesGroupProject/static/media/logo.5d5d9eef.svg"
+  "precache-manifest.2d4c8c56111819482ea1bb4fab1d7150.js": "/davis-cook98/DatabasesGroupProject/precache-manifest.2d4c8c56111819482ea1bb4fab1d7150.js",
+  "service-worker.js": "/davis-cook98/DatabasesGroupProject/service-worker.js"
 }

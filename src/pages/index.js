@@ -14,6 +14,9 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import Navbar from "../components/Navbar";
+import Login from "./Login";
+import Routes from '../Routes';
 
 const styles = theme => ({
   root: {
@@ -43,40 +46,18 @@ class Index extends React.Component {
     const { classes } = this.props;
     const { open } = this.state;
 
+    let links = [
+      { label: 'Home', link: '/', active: true},
+      { label: 'Employees', link: '/employees'},
+      { label: 'Equipment', link: '/equipment'},
+      { label: 'Reservations', link: '/reservations'}
+    ];
+
     return (
-      <div className={classes.root}>
-        <Dialog open={open} onClose={this.handleClose}>
-          <DialogContent>
-            <form className={classes.form}>
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="username">Username</InputLabel>
-                <Input id="email" name="email" autoFocus />
-              </FormControl>
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="password">Password</InputLabel>
-                <Input name="password" type="password" id="password" autoComplete="current-password" />
-              </FormControl>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="secondary"
-                className={classes.submit}
-              >
-                Sign in
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
-        <Typography variant="h4" gutterBottom>
-          ABC Corp's Device Interface
-        </Typography>
-        <Typography variant="subtitle1" gutterBottom>
-          Please enter your credentials below
-        </Typography>
-        <Button variant="contained" color="secondary" onClick={this.handleClick}>
-          Login Form
-        </Button>
+      <div>
+        <Navbar links = {links}>
+          <Link to={'/'}>Home</Link>
+        </Navbar>
       </div>
     );
   }

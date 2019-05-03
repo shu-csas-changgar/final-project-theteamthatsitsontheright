@@ -1,0 +1,17 @@
+.App {
+    margin-top: 15px;
+}
+
+.App .navbar {
+    background-color: white;
+}
+
+.App .navbar-brand {
+    font-family: "Merriweather", sans-serif;
+    font-weight: bold;
+}
+
+div {
+    font-family: "Montserrat", sans-serif;
+}
+
