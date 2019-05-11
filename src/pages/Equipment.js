@@ -1,10 +1,218 @@
 import React, { Component } from "react";
+import { Form, Row, Col, FormControl, FormGroup, Button, Modal } from "react-bootstrap";
 
 class Equipment extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            equipment: [],
+            equipment_types: [],
+            contract_types: [],
+            viewModalShow: false,
+            createModalShow: false,
+            equipment_focus: null,
+            search: '',
+            search_field: '',
+            equipment_type: '',
+            contract_type: '',
+            error: ''
+        };
+
+        this.openViewModal = (item) => {
+            this.setState({ viewModalShow: true });
+            this.setState({ equipment_f: item });
+        };
+
+        this.hideViewModal = () => {
+            this.setState({ viewModalShow: false });
+            this.setState({ equipment_f: null });
+        };
+
+        this.openCreateModal = () => {
+            this.setState({ createModalShow: true });
+        };
+
+        this.hideCreateModal = () => {
+            this.setState({ createModalShow: false });
+        };
+
+        this.handleChange = (event) => {
+            this.setState({
+                [event.target.id]: event.target.value
+            });
+        };
+
+        this.handleSearch = this.handleSearch.bind(this);
+    }
+
+    componentDidMount = () => {
+        // This is used to get the contract_types for the filter dropdown.
+        fetch('/equipment/contract_types', {
+            method: 'GET'
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({ error: 'Bad response from the server' })
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ contract_types: data });
+        }).catch((error) => {
+            console.log(error);
+            this.setState({ error: error });
+        });
+
+        //This is used to get the list of equipment types for the filter dropdown.
+        fetch('/equipment/equipment_types', {
+            method: 'GET'
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({ error: 'Bad response from the server' })
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ equipment_types: data });
+        }).catch((error) => {
+            console.log(error);
+            this.setState({ error: error });
+        });
+
+        // This is used to get a list of the equipments for the table.
+        fetch('/equipment', {
+            method: 'GET'
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({ error: 'Bad response from the server' })
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ equipment: data });
+        }).catch((error) => {
+            console.log(error);
+            this.setState({ error: error });
+        })
+    };
+
+    handleSearch = (event) => {
+        event.preventDefault();
+        const data = {
+            search: this.state.search,
+            search_field: this.state.search_field,
+            contract_type: this.state.contract_type,
+            equipment_type: this.state.equipment_type
+        };
+        fetch('/equipment/filter', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({error: 'Bad response from the server'});
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({users: data});
+        }).catch((error) => {
+            console.log(error);
+            this.setState({'error': error});
+        });
+    };
+
     render() {
         return (
             <div>
                 <h1>Equipment</h1>
+                <div className={'container'}>
+                    <Form noValidate onSubmit={this.handleSearch}>
+                        <Row>
+                            <Col>
+                                <FormGroup controlId={'search'} bssize={'large'}>
+                                    <FormControl
+                                        type={'string'}
+                                        value={this.state.search}
+                                        onChange={this.handleChange}
+                                        />
+                                </FormGroup>
+                            </Col>
+                            <Col>
+                                <FormGroup controlId={'search_field'} bssize={'large'}>
+                                    <FormControl as={'select'} onChange={this.handleChange}>
+                                        <option key={'vendor_name'} value={'vendor_name'}>Vendor Name</option>
+                                        <option key={'office_name'} value={'office_name'}>Office Name</option>
+                                    </FormControl>
+                                </FormGroup>
+                            </Col>
+                            <Col>
+                                <FormGroup controlId={'equipment_type'} bssize={'large'}>
+                                    <FormControl as={'select'} onChange={this.handleChange}>
+                                        {
+                                            this.state.equipment_types.map((type) => {
+                                                return (
+                                                    <option
+                                                        value={type.equipment_type_id}
+                                                        key={type.equipment_type_id}
+                                                    >
+                                                        {type.type_name}
+                                                    </option>
+                                                )
+                                            })
+                                        }
+                                    </FormControl>
+                                </FormGroup>
+                            </Col>
+                            <Col>
+                                <FormGroup controlId={'contract_type'} bssize={'large'}>
+                                    <FormControl as={'select'} onChange={this.handleChange}>
+                                        {
+                                            this.state.contract_types.map((type) => {
+                                                return (
+                                                    <option
+                                                        value={type.contract_type_id}
+                                                        key={type.contract_type_id}
+                                                    >
+                                                        {type.contract_name}
+                                                    </option>
+                                                )
+                                            })
+                                        }
+                                    </FormControl>
+                                </FormGroup>
+                            </Col>
+                            <Col>
+                                <Button
+                                    block
+                                    bssize={"small"}
+                                    type={"submit"}
+                                >
+                                    Filter
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Form>
+                    <Button
+                        block
+                        bssize={'large'}
+                        onClick={this.openCreateModal}
+                        >
+                        Add new Item
+                    </Button>
+                    <Modal
+                        show={this.state.createModalShow}
+                        onHide={this.hideCreateModal}
+                        aria-labelledby="contained-modal-title-vcenter"
+                        size={'lg'}
+                        centered
+                    >
+                        <Modal.Header closeButton={true}>
+                            <Modal.Title id="contained-modal-title-vcenter">
+                                Add new Equipment
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+
+                        </Modal.Body>
+                    </Modal>
+                </div>
             </div>
         )
     }
