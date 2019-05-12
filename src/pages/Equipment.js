@@ -14,8 +14,8 @@ class Equipment extends Component {
             equipment_focus: null,
             search: '',
             search_field: 'equipment_name',
-            equipment_type: '',
-            contract_type: '',
+            equipment_type: '1',
+            contract_type: '1',
             error: ''
         };
 
@@ -116,7 +116,7 @@ class Equipment extends Component {
             }
             return response.json();
         }).then((data) => {
-            this.setState({users: data});
+            this.setState({ equipment: data});
         }).catch((error) => {
             console.log(error);
             this.setState({'error': error});
