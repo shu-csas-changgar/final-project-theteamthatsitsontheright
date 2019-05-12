@@ -7,22 +7,22 @@ const mysql = require('mysql');
  */
 router.get('/', function (req, res, next) {
     const sql =
-        'SELECT equipment_id, equipment_name, vendor_name, employee_id, first_name ' +
+        'SELECT equipment_id, equipment_name, vendor_name, type_name, contract_name, office_name, expire_date ' +
             'FROM equipment ' +
-                'INNER JOIN employee ' +
-                    'USING(employee_id) ' +
                 'INNER JOIN contract_type ' +
                     'USING(contract_type_id) ' +
                 'INNER JOIN equipment_type ' +
                     'USING(equipment_type_id) ' +
                 'INNER JOIN office ' +
-                    'USING(office_id) ' +
+                    'ON equipment.office_id = office.office_id ' +
                 'INNER JOIN vendor ' +
                     'USING(vendor_id)';
+    console.log(sql);
     res.locals.connection.query(sql, (error, results, fields) => {
         if (error) {
             throw error;
         } else {
+            console.log(results);
             res.json(results);
         }
     })

@@ -13,7 +13,7 @@ class Equipment extends Component {
             createModalShow: false,
             equipment_focus: null,
             search: '',
-            search_field: '',
+            search_field: 'equipment_name',
             equipment_type: '',
             contract_type: '',
             error: ''
@@ -48,34 +48,38 @@ class Equipment extends Component {
 
     componentDidMount = () => {
         // This is used to get the contract_types for the filter dropdown.
-        fetch('/equipment/contract_types', {
-            method: 'GET'
-        }).then((response) => {
-            if (response.status >= 400) {
-                this.setState({ error: 'Bad response from the server' })
-            }
-            return response.json();
-        }).then((data) => {
-            this.setState({ contract_types: data });
-        }).catch((error) => {
-            console.log(error);
-            this.setState({ error: error });
-        });
+        if (this.state.equipment_types.length === 0) {
+            fetch('/equipment/contract_types', {
+                method: 'GET'
+            }).then((response) => {
+                if (response.status >= 400) {
+                    this.setState({error: 'Bad response from the server'})
+                }
+                return response.json();
+            }).then((data) => {
+                this.setState({contract_types: data});
+            }).catch((error) => {
+                console.log(error);
+                this.setState({error: error});
+            });
+        }
 
-        //This is used to get the list of equipment types for the filter dropdown.
-        fetch('/equipment/equipment_types', {
-            method: 'GET'
-        }).then((response) => {
-            if (response.status >= 400) {
-                this.setState({ error: 'Bad response from the server' })
-            }
-            return response.json();
-        }).then((data) => {
-            this.setState({ equipment_types: data });
-        }).catch((error) => {
-            console.log(error);
-            this.setState({ error: error });
-        });
+        if (this.state.contract_types.length === 0) {
+            //This is used to get the list of equipment types for the filter dropdown.
+            fetch('/equipment/equipment_types', {
+                method: 'GET'
+            }).then((response) => {
+                if (response.status >= 400) {
+                    this.setState({error: 'Bad response from the server'})
+                }
+                return response.json();
+            }).then((data) => {
+                this.setState({equipment_types: data});
+            }).catch((error) => {
+                console.log(error);
+                this.setState({error: error});
+            });
+        }
 
         // This is used to get a list of the equipments for the table.
         fetch('/equipment', {
@@ -87,6 +91,7 @@ class Equipment extends Component {
             return response.json();
         }).then((data) => {
             this.setState({ equipment: data });
+            console.log(this.state.equipment);
         }).catch((error) => {
             console.log(error);
             this.setState({ error: error });
@@ -137,6 +142,7 @@ class Equipment extends Component {
                             <Col>
                                 <FormGroup controlId={'search_field'} bssize={'large'}>
                                     <FormControl as={'select'} onChange={this.handleChange}>
+                                        <option key={'equipment_name'} value={'equipment_name'}>Equipment Name</option>
                                         <option key={'vendor_name'} value={'vendor_name'}>Vendor Name</option>
                                         <option key={'office_name'} value={'office_name'}>Office Name</option>
                                     </FormControl>
@@ -196,6 +202,36 @@ class Equipment extends Component {
                         >
                         Add new Item
                     </Button>
+                    <table className={"table table-hover"}>
+                        <thead>
+                        <tr>
+                            <th>Equipment Name</th>
+                            <th>Equipment Type</th>
+                            <th>Contract Type</th>
+                            <th>Vendor Name</th>
+                            <th>Office Name</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {
+                            this.state.equipment.map(item =>
+                                <tr key={item.equipment_id}>
+                                    <td>{item.equipment_name}</td>
+                                    <td>{item.type_name}</td>
+                                    <td>{item.contract_name}</td>
+                                    <td>{item.vendor_name}</td>
+                                    <td>{item.office_name}</td>
+                                    <td>
+                                        <Button variant="primary" onClick={() => this.openViewModal(item)}>
+                                            View/Edit
+                                        </Button>
+                                    </td>
+                                </tr>
+                            )
+                        }
+                        </tbody>
+                    </table>
                     <Modal
                         show={this.state.createModalShow}
                         onHide={this.hideCreateModal}

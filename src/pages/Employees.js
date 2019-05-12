@@ -170,7 +170,7 @@ class Employees extends Component {
                                         <td>{member.phone_number}</td>
                                         <td>
                                             <Button variant="primary" onClick={() => this.handleShow(member)}>
-                                                View/Edit
+                                                View
                                             </Button>
                                         </td>
                                     </tr>
