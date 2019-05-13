@@ -6,7 +6,7 @@ class Reservations extends Component {
         super(props);
 
         this.state = {
-            reservation: [],
+            reservations: [],
             reservation_id: '',
             reservation_name: [],
             reservation_types: [],
@@ -27,17 +27,17 @@ class Reservations extends Component {
             new_start_time: '',
             new_end_time: '',
             new_room_id: '',
-            new_office_name: ''
+            new_office: ''
         };
 
         this.openViewModal = (item) => {
             this.setState({ viewModalShow: true });
-            this.setState({ reservation_f: item });
+            this.setState({ reservation_focus: item });
         };
 
         this.hideViewModal = () => {
             this.setState({ viewModalShow: false });
-            this.setState({ reservation_f: null });
+            this.setState({ reservation_focus: null });
         };
 
         this.openCreateModal = () => {
@@ -55,12 +55,21 @@ class Reservations extends Component {
         };
 
         this.handleSearch = this.handleSearch.bind(this);
+        this.handleCreate = this.handleCreate.bind(this);
     }
+
+    validateForm = () => {
+        return this.state.new_reservation_name.length > 0 &&
+            this.state.new_room_id.length > 0 &&
+            this.state.new_start_time.length > 0 &&
+            this.state.new_end_time.length > 0;
+            //this.state.new_office.length > 0;
+    };
 
     componentDidMount = () => {
         // This is used to get the contract_types for the filter dropdown.
         if (this.state.reservation_types.length === 0) {
-            fetch('/reservation/contract_types', {
+            fetch('/reservations/contract_types', {
                 method: 'GET'
             }).then((response) => {
                 if (response.status >= 400) {
@@ -76,7 +85,7 @@ class Reservations extends Component {
         }
 
         // This is used to get a list of the reservations for the table.
-        fetch('/reservation', {
+        fetch('/reservations', {
             method: 'GET'
         }).then((response) => {
             if (response.status >= 400) {
@@ -84,8 +93,7 @@ class Reservations extends Component {
             }
             return response.json();
         }).then((data) => {
-            this.setState({ reservation: data });
-            console.log(this.state.reservation);
+            this.setState({ reservations: data });
         }).catch((error) => {
             console.log(error);
             this.setState({ error: error });
@@ -115,6 +123,46 @@ class Reservations extends Component {
             console.log(error);
             this.setState({'error': error});
         });
+    };
+
+    handleCreate = (event) => {
+        event.preventDefault();
+        const data = {
+            new_reservation_name: this.state.new_reservation_name,
+            new_room_id: this.state.new_room_id,
+            new_start_time: this.state.new_start_time,
+            new_end_time: this.state.new_end_time
+        };
+        fetch('/reservations/new', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({error: 'Bad response from server'})
+            }
+            return response.json();
+        }).then((data) => {
+            this.hideCreateModal();
+        }).catch((error) => {
+            console.log(error);
+            this.setState({error: error});
+        })
+
+        // This is used to get a list of the reservations for the table.
+        fetch('/reservations', {
+            method: 'GET'
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({ error: 'Bad response from the server' })
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ reservations: data });
+        }).catch((error) => {
+            console.log(error);
+            this.setState({ error: error });
+        })
     };
 
     render() {
@@ -170,13 +218,12 @@ class Reservations extends Component {
                         </thead>
                         <tbody>
                         {
-                            this.state.reservation.map(item =>
+                            this.state.reservations.map(item =>
                                 <tr key={item.reservation_id}>
                                     <td>{item.reservation_name}</td>
-                                    <td>{item.type_name}</td>
-                                    <td>{item.contract_name}</td>
-                                    <td>{item.vendor_name}</td>
-                                    <td>{item.office_name}</td>
+                                    <td>{item.room_id}</td>
+                                    <td>{item.reservation_start}</td>
+                                    <td>{item.reservation_end}</td>
                                     <td>
                                         <Button variant="primary" onClick={() => this.openViewModal(item)}>
                                             View/Edit
@@ -189,12 +236,12 @@ class Reservations extends Component {
                     </table>
                     <Modal
                         show={this.state.viewModalShow}
-                        onHide={this.state.hideViewModal}
+                        onHide={this.hideViewModal}
                         aria-labelledby="contained-modal-title-vcenter"
                         size={'lg'}
                         centered
                     >
-                        <Modal.Header>
+                        <Modal.Header closeButton={true}>
                             <Modal.Title id="contained-modal-title-vcenter">
                                Reservation View
                             </Modal.Title>
@@ -234,7 +281,7 @@ class Reservations extends Component {
                         show={this.state.createModalShow}
                         onHide={this.hideCreateModal}
                         aria-labelledby="contained-modal-title-vcenter"
-                       size={'lg'}
+                        size={'lg'}
                         centered
                     >
                         <Modal.Header closeButton={true}>
@@ -243,40 +290,40 @@ class Reservations extends Component {
                             </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-
-                            <FormGroup controlId={'new_reservation_name'} bssize={'large'}>
-                                <h3>Reservation Name</h3>
-                                <FormControl
-                                    type={'string'}
-                                    value={this.state.new_reservation_name}
-                                    onChange={this.handleChange}
-                                />
-                            </FormGroup>
-                            <FormGroup controlId={'new_room_id'} bssize={'large'}>
-                                <h3>Room ID</h3>
-                                <FormControl
-                                    type={'string'}
-                                    value={this.state.new_room_id}
-                                    onChange={this.handleChange}
-                                />
-                            </FormGroup>
-                            <FormGroup controlId={'new_start_time'} bssize={'large'}>
-                                <h3>Start Time</h3>
-                                <FormControl
-                                    type={'string'}
-                                   value={this.state.new_start_time}
-                                    onChange={this.handleChange}
-                                />
-                            </FormGroup>
-                            <FormGroup controlId={'new_end_time'} bssize={'large'}>
-                                <h3>End Time</h3>
-                                <FormControl
-                                    type={'string'}
-                                    value={this.state.new_end_time}
-                                    onChange={this.handleChange}
-                                />
-                            </FormGroup>
-
+                            <form noValidate onSubmit={this.handleCreate}>
+                                <FormGroup controlId={'new_reservation_name'} bssize={'large'}>
+                                    <h3>Reservation Name</h3>
+                                    <FormControl
+                                        type={'string'}
+                                        value={this.state.new_reservation_name}
+                                        onChange={this.handleChange}
+                                    />
+                                </FormGroup>
+                                <FormGroup controlId={'new_room_id'} bssize={'large'}>
+                                    <h3>Room ID</h3>
+                                    <FormControl
+                                        type={'string'}
+                                        value={this.state.new_room_id}
+                                        onChange={this.handleChange}
+                                    />
+                                </FormGroup>
+                                <FormGroup controlId={'new_start_time'} bssize={'large'}>
+                                    <h3>Start Time (YYYY-MM-DD hh:mm)</h3>
+                                    <FormControl
+                                        type={'string'}
+                                       value={this.state.new_start_time}
+                                        onChange={this.handleChange}
+                                    />
+                                </FormGroup>
+                                <FormGroup controlId={'new_end_time'} bssize={'large'}>
+                                    <h3>End Time (YYYY-MM-DD hh:mm)</h3>
+                                    <FormControl
+                                        type={'string'}
+                                        value={this.state.new_end_time}
+                                        onChange={this.handleChange}
+                                    />
+                                </FormGroup>
+                            </form>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="secondary"
@@ -285,7 +332,8 @@ class Reservations extends Component {
                             </Button>
                             <Button variant="primary"
                                     type={"submit"}
-                                    onClick={this.handleSubmit}>
+                                    disabled={!this.validateForm()}
+                                    onClick={this.handleCreate}>
                                 Add Item
                             </Button>
                         </Modal.Footer>

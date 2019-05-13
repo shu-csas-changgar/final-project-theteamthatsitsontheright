@@ -3,7 +3,29 @@ let router = express.Router();
 const mysql = require('mysql');
 
 router.get('/', function(req, res, next) {
-    res.render('reservations', {title: 'ABC Corp'});
+    const sql = 'SELECT * FROM reservation INNER JOIN room USING(room_id) INNER JOIN office USING(office_id)';
+    res.locals.connection.query(sql, (error, results, fields) => {
+        if (error) {
+            throw error;
+        } else {
+            res.json(results);
+        }
+    })
+});
+
+router.post('/new', (req, res, next) => {
+    const sql = 'INSERT INTO reservation(reservation_name, room_id, reservation_start, reservation_end) VALUES(?, ?, ?, ?)';
+    const start = req.body.new_start_time;
+    const end = req.body.new_end_time;
+    const replaces = [req.body.new_reservation_name, req.body.new_room_id, start, end];
+    const sql_query = mysql.format(sql, replaces);
+    res.locals.connection.query(sql_query, (error, results, fields) => {
+        if (error) {
+            throw error;
+        } else {
+            res.json(results);
+        }
+    })
 });
 
 router.post('/filter_personal', (req, res, next) => {

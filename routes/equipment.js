@@ -122,6 +122,19 @@ router.post('/delete', (req, res, next) => {
     })
 });
 
+router.post('/claim', (req, res, next) => {
+    const sql = 'UPDATE equipment SET employee_id = ? WHERE equipment_id = ?';
+    const replaces = [req.body.employee_id, req.body.equipment_id];
+    const sql_query = mysql.format(sql, replaces);
+    res.locals.connection.query(sql_query, (error, results, fields) => {
+        if (error) {
+            throw error;
+        } else {
+            res.json(results);
+        }
+    })
+});
+
 router.post('/filter_personal', (req, res, next) => {
     const sql =
         'SELECT * ' +

@@ -81,6 +81,20 @@ class Equipment extends Component {
         this.handleDelete = this.handleDelete.bind(this);
     }
 
+    validateForm = () => {
+        return this.state.new_equipment_name.length > 0 &&
+            this.state.new_vendor.length > 0 &&
+            this.state.new_equipment_type.length > 0 &&
+            this.state.new_contract_type.length > 0 &&
+            this.state.new_office.length > 0;
+    };
+
+    validateClaim = () => {
+        return this.state.equipment_focus != null &&
+            this.state.equipment_focus.employee_id == null &&
+            this.props.loggedIn != null;
+    };
+
     componentDidMount = () => {
         // This is used to get the contract_types for the filter dropdown.
         if (this.state.equipment_types.length === 0) {
@@ -229,6 +243,45 @@ class Equipment extends Component {
         });
         this.componentDidMount();
         this.hideViewModal();
+    };
+
+    handleClaim = (event) => {
+        event.preventDefault();
+        const data = {
+            equipment_id: this.state.equipment_focus.equipment_id,
+            employee_id: this.props.loggedIn.employee_id
+        };
+        fetch('equipment/claim', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({error: 'Bad response from server'});
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ error: 'Success' })
+        }).catch((error) => {
+            console.log(error);
+            this.setState({error: error});
+        });
+        this.hideViewModal();
+        // This is used to get a list of the equipments for the table.
+        fetch('/equipment', {
+            method: 'GET'
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({ error: 'Bad response from the server' })
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ equipment: data });
+            console.log(this.state.equipment);
+        }).catch((error) => {
+            console.log(error);
+            this.setState({ error: error });
+        })
     };
 
     render() {
@@ -385,6 +438,9 @@ class Equipment extends Component {
                             }
                         </Modal.Body>
                         <Modal.Footer>
+                            <Button onClick={this.handleClaim} disabled={!this.validateClaim()}>
+                                Claim Item
+                            </Button>
                             <Button onClick={this.handleDelete}>
                                 Delete Item
                             </Button>
@@ -482,6 +538,7 @@ class Equipment extends Component {
                                 bssize={"large"}
                                 type={"submit"}
                                 onClick={this.handleCreate}
+                                disabled={!this.validateForm()}
                             >
                                 Add Item
                             </Button>
