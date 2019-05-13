@@ -58,7 +58,9 @@ class PersonalDash extends Component {
                 Personal Dash of
 
                 <div> {this.state.employee.first_name} {this.state.employee.last_name} </div>
-
+                <div>
+                <br /> 
+                </div>
                 Current equipment under your name 
 
                 <table className={"equipment"}>
@@ -87,6 +89,12 @@ class PersonalDash extends Component {
                         </tbody>
                     </table>
 
+                    <div> 
+                    <br /> 
+                    </div>
+
+                    <div> Reservations under your name </div>
+
                     <table className={"reservations"}>
                         <thead>
                         <tr>
@@ -100,7 +108,7 @@ class PersonalDash extends Component {
                         </thead>
                         <tbody>
                         {
-                            this.state.equipment.map(item =>
+                            this.state.reservations.map(item =>
                                 <tr key={item.equipment_id}>
                                     <td>{item.equipment_name}</td>
                                     <td>{item.reservation_start}</td>

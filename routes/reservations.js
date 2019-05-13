@@ -12,14 +12,15 @@ router.post('/filter_personal', (req, res, next) => {
                 'INNER JOIN equipment_reservation ' +
                     'USING(reservation_id) ' +
                 'INNER JOIN equipment ' +
-                    'USING(equpiment_id) ' +
+                    'USING(equipment_id) ' +
                 'INNER JOIN office ' +
                     'USING(office_id) ' +
                 'INNER JOIN equipment_type ' +
-                    'USING(equipent_type_id) ' +
+                    'USING(equipment_type_id) ' +
                 'INNER JOIN employee ' +
                     'USING(employee_id) ' +
-            'WHERE ' + req.body.search_field + ' = ' + req.body.search; 
+            'WHERE ' + req.body.search_field + ' = ' + req.body.search +
+                'AND reservation_id >= 0'; 
     res.locals.connection.query(sql, (error, results, fields) => {
         if (error) {
             throw error;
