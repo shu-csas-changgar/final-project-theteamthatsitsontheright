@@ -128,10 +128,10 @@ class Reservations extends Component {
     handleCreate = (event) => {
         event.preventDefault();
         const data = {
-            reservation_name: this.state.reservation_name,
-            room_id: this.state.room_id,
-            start_time: this.state.start_time,
-            end_time: this.state.end_time
+            new_reservation_name: this.state.new_reservation_name,
+            new_room_id: this.state.new_room_id,
+            new_start_time: this.state.new_start_time,
+            new_end_time: this.state.new_end_time
         };
         fetch('/reservations/new', {
             method: 'POST',
