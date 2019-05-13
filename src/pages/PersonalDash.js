@@ -100,7 +100,7 @@ class PersonalDash extends Component {
                         </thead>
                         <tbody>
                         {
-                            this.state.equipment.map(item =>
+                            this.state.reservations.map(item =>
                                 <tr key={item.equipment_id}>
                                     <td>{item.equipment_name}</td>
                                     <td>{item.reservation_start}</td>
