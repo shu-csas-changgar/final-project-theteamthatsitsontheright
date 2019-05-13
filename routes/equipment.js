@@ -76,4 +76,29 @@ router.post('/filter', (req, res, next) => {
     })
 });
 
+router.post('/filter_personal', (req, res, next) => {
+    const sql =
+        'SELECT * ' +
+            'FROM equipment ' +
+                'INNER JOIN equipment_type ' +
+                    'USING(equipment_type_id) ' +
+                'INNER JOIN contract_type ' +
+                    'USING(contract_type_id) ' +
+                'INNER JOIN office ' +
+                    'USING(office_id) ' +
+                'INNER JOIN vendor ' +
+                    'USING(vendor_id) ' +
+                'INNER JOIN employee ' +
+                    'USING(employee_id) ' +
+            'WHERE ' + req.body.search_field + ' = ' + req.body.search; 
+    res.locals.connection.query(sql, (error, results, fields) => {
+        if (error) {
+            throw error;
+        } else {
+            res.json(results);
+        }
+    })
+});
+
+
 module.exports = router;

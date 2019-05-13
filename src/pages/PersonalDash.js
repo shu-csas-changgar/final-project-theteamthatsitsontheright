@@ -3,12 +3,74 @@ import React, { Component } from 'react';
 class PersonalDash extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            equipment:[],
+            show: false,
+            employee: this.props.loggedIn, 
+            error: ''
+        };
+    }
+
+    componentDidMount = () => {  
+        const data = {
+            search: this.state.employee.employee_id,
+            search_field: 'employee_id'
+        };
+        
+        fetch('/equipment/filter_personal', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({error: 'Bad response from the server'});
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({equipment: data});
+        }).catch((error) => {
+            console.log(error);
+            this.setState({'error': error});
+        });
+        console.log(this.state.equipment);
     }
 
     render() {
         return (
             <div>
-                Personal Dash
+                Personal Dash of
+
+                <div> {this.state.employee.first_name} {this.state.employee.last_name} </div>
+
+                Current equipment under your name 
+
+                <table className={"table table-hover"}>
+                        <thead>
+                        <tr>
+                            <th>Equipment Name</th>
+                            <th>Equipment Type</th>
+                            <th>Contract Type</th>
+                            <th>Vendor Name</th>
+                            <th>Office Name</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {
+                            this.state.equipment.map(item =>
+                                <tr key={item.equipment_id}>
+                                    <td>{item.equipment_name}</td>
+                                    <td>{item.type_name}</td>
+                                    <td>{item.contract_name}</td>
+                                    <td>{item.vendor_name}</td>
+                                    <td>{item.office_name}</td> 
+                                </tr>
+                            )
+                        }
+                        </tbody>
+                    </table>
+
             </div>
         )
     }
