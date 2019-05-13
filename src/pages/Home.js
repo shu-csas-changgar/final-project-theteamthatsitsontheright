@@ -14,7 +14,8 @@ class Home extends Component {
                     <h1>Welcome to the ABC Company IT Page!</h1>
                     {
                         (this.props.isAuthenticated === true) ?
-                            <PersonalDash/> :
+                            <PersonalDash
+                                loggedIn = {this.props.loggedIn}/> :
                             <div/>
                     }
                 </div>
