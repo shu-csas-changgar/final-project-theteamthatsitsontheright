@@ -128,10 +128,10 @@ class Reservations extends Component {
     handleCreate = (event) => {
         event.preventDefault();
         const data = {
-            new_reservation_name: this.state.new_reservation_name,
-            new_room_id: this.state.new_room_id,
-            new_start_time: this.state.new_start_time,
-            new_end_time: this.state.new_end_time
+            reservation_name: this.state.reservation_name,
+            room_id: this.state.room_id,
+            start_time: this.state.start_time,
+            end_time: this.state.end_time
         };
         fetch('/reservations/new', {
             method: 'POST',
@@ -248,29 +248,31 @@ class Reservations extends Component {
                         </Modal.Header>
                         <Modal.Body>
                             {
+                              (this.state.reservation_focus === null) ?
+                                    <div>null</div> :
                                     <div>
                                         <Row>
                                             <Col>
-                                                <h5>Reservation Name: {this.state.reservation_name}</h5>
+                                                <h5>Reservation Name: {this.state.reservation_focus.reservation_name}</h5>
                                             </Col>
                                             <Col>
-                                                <h5>Reservation ID: {this.state.reservation_id}</h5>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col>
-                                                <h5>Start Time: {this.state.start_time}</h5>
-                                            </Col>
-                                            <Col>
-                                                <h5>End Time: {this.state.end_time}</h5>
+                                                <h5>Reservation ID: {this.state.reservation_focus.reservation_id}</h5>
                                             </Col>
                                         </Row>
                                         <Row>
                                             <Col>
-                                                <h5>Room ID: {this.state.room_id}</h5>
+                                                <h5>Start Time: {this.state.reservation_focus.reservation_start}</h5>
                                             </Col>
                                             <Col>
-                                                <h5>Office Name: {this.state.office_name}</h5>
+                                                <h5>End Time: {this.state.reservation_focus.reservation_end}</h5>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <h5>Room ID: {this.state.reservation_focus.room_id}</h5>
+                                            </Col>
+                                            <Col>
+                                                <h5>Office Name: {this.state.reservation_focus.office_name}</h5>
                                             </Col>
                                         </Row>
                                     </div>
