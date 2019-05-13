@@ -24,3 +24,6 @@ Use of the website should be relatively straightforward. The use of each tab wil
 * **State:** List of all states for addresses. Has an ID and Name.
 * **Vendor:** List of all vendors we have. Has a name and a location Id (joins to location table).
 * ***Why we chose this schema:*** we wanted to abstract as much data out as possible (state having its own table) so that confusion would be as minimal as possible.
+
+## Considerations for the future
+Currently we do not have working updates for our employees and we do not have a way to add vendors. This is something we plan to add in the future.
