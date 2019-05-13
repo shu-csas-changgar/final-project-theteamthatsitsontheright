@@ -6,6 +6,7 @@ class PersonalDash extends Component {
 
         this.state = {
             equipment:[],
+            reservations:[],
             show: false,
             employee: this.props.loggedIn, 
             error: ''
@@ -17,7 +18,7 @@ class PersonalDash extends Component {
             search: this.state.employee.employee_id,
             search_field: 'employee_id'
         };
-        
+
         fetch('/equipment/filter_personal', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -33,7 +34,22 @@ class PersonalDash extends Component {
             console.log(error);
             this.setState({'error': error});
         });
-        console.log(this.state.equipment);
+    
+        fetch('/reservations/filter_personal', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({error: 'Bad response from the server'});
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({reservations: data});
+        }).catch((error) => {
+            console.log(error);
+            this.setState({'error': error});
+        });
     }
 
     render() {
@@ -45,7 +61,7 @@ class PersonalDash extends Component {
 
                 Current equipment under your name 
 
-                <table className={"table table-hover"}>
+                <table className={"equipment"}>
                         <thead>
                         <tr>
                             <th>Equipment Name</th>
@@ -63,6 +79,32 @@ class PersonalDash extends Component {
                                     <td>{item.equipment_name}</td>
                                     <td>{item.type_name}</td>
                                     <td>{item.contract_name}</td>
+                                    <td>{item.vendor_name}</td>
+                                    <td>{item.office_name}</td> 
+                                </tr>
+                            )
+                        }
+                        </tbody>
+                    </table>
+
+                    <table className={"reservations"}>
+                        <thead>
+                        <tr>
+                            <th>Equipment Name</th>
+                            <th>Equipment Type</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Vendor Name</th>
+                            <th>Office Name</th> 
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {
+                            this.state.equipment.map(item =>
+                                <tr key={item.equipment_id}>
+                                    <td>{item.equipment_name}</td>
+                                    <td>{item.reservation_start}</td>
+                                    <td>{item.reservation_end}</td>
                                     <td>{item.vendor_name}</td>
                                     <td>{item.office_name}</td> 
                                 </tr>
