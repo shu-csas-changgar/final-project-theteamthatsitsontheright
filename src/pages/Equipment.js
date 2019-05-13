@@ -9,20 +9,26 @@ class Equipment extends Component {
             equipment: [],
             equipment_types: [],
             contract_types: [],
+            vendors: [],
+            offices: [],
             viewModalShow: false,
             createModalShow: false,
             equipment_focus: null,
-            offices: [],
             search: '',
             search_field: 'equipment_name',
             equipment_type: '1',
             contract_type: '1',
             error: '',
+            new_equipment_name: '',
+            new_vendor: '',
+            new_equipment_type: '1',
+            new_contract_type: '1',
+            new_office: '1'
         };
 
         this.openViewModal = (item) => {
             this.setState({ viewModalShow: true });
-            this.setState({ equipment_f: item });
+            this.setState({ equipment_focus: item });
         };
 
         this.hideViewModal = () => {
@@ -32,6 +38,32 @@ class Equipment extends Component {
 
         this.openCreateModal = () => {
             this.setState({ createModalShow: true });
+            fetch('equipment/vendors', {
+                method: 'GET'
+            }).then((response) => {
+                if (response.status >= 400) {
+                    this.setState({error: 'Bad response from the server'})
+                }
+                return response.json();
+            }).then((data) => {
+                this.setState({ vendors: data });
+            }).catch((error) => {
+                console.log(error);
+                this.setState({error: error});
+            });
+            fetch('equipment/offices', {
+                method: 'GET'
+            }).then((response) => {
+                if (response.status >= 400) {
+                    this.setState({error: 'Bad response from the server'})
+                }
+                return response.json();
+            }).then((data) => {
+                this.setState({ offices: data });
+            }).catch((error) => {
+                console.log(error);
+                this.setState({error: error});
+            });
         };
 
         this.hideCreateModal = () => {
@@ -45,7 +77,8 @@ class Equipment extends Component {
         };
 
         this.handleSearch = this.handleSearch.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleCreate = this.handleCreate.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     componentDidMount = () => {
@@ -126,14 +159,14 @@ class Equipment extends Component {
         });
     };
 
-    handleSubmit = (event) => {
+    handleCreate = (event) => {
         event.preventDefault();
         const data = {
             new_equipment_name: this.state.new_equipment_name,
             new_equipment_type: this.state.new_equipment_type,
             new_contract_type: this.state.new_contract_type,
-            new_vendor_name: this.state.new_vendor_name,
-            new_office_name: this.state.new_office_name,
+            new_vendor: this.state.new_vendor,
+            new_office: this.state.new_office,
         };
         fetch('/equipment/new', {
             method: 'POST',
@@ -149,17 +182,54 @@ class Equipment extends Component {
             if (data === 'That equipment already exists.') {
                 this.setState({ error: data })
             } else {
-                this.props.userHasAuthenticated(true);
-                this.props.loginUser(data[0]);
-                this.props.history.push('/')
+                this.componentDidMount();
             }
         }).catch((error) => {
                 console.log(error);
                 this.setState({ error: error });
             }
         );
+        this.componentDidMount();
+        this.hideCreateModal();
     };
 
+    handleDelete = (event) => {
+        event.preventDefault();
+        const data = {
+            equipment_id: this.state.equipment_focus.equipment_id
+        };
+        fetch('equipment/delete', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({ error: 'Bad response from server' })
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ error: data });
+        }).catch((error) => {
+            console.log(error);
+            this.setState({error: error});
+        });
+        // This is used to get a list of the equipments for the table.
+        fetch('/equipment', {
+            method: 'GET'
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({ error: 'Bad response from the server' })
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ equipment: data });
+        }).catch((error) => {
+            console.log(error);
+            this.setState({ error: error });
+        });
+        this.componentDidMount();
+        this.hideViewModal();
+    };
 
     render() {
         return (
@@ -271,8 +341,8 @@ class Equipment extends Component {
                         </tbody>
                     </table>
                     <Modal
-                        show={this.state.show}
-                        onHide={this.handleHide}
+                        show={this.state.viewModalShow}
+                        onHide={this.hideViewModal}
                         aria-labelledby="contained-modal-title-vcenter"
                         size={'lg'}
                         centered
@@ -284,36 +354,41 @@ class Equipment extends Component {
                         </Modal.Header>
                         <Modal.Body>
                             {
-                                (this.state.equipment == null) ?
+                                (this.state.equipment_focus === null) ?
                                     <div>null</div> :
                                     <div>
                                         <Row>
                                             <Col>
-                                                <h5>Equipment Name: {this.state.equipment_name}</h5>
+                                                <h5>Equipment Name: {this.state.equipment_focus.equipment_name}</h5>
                                             </Col>
                                             <Col>
-                                                <h5>Equipment ID: {this.state.equipment_id}</h5>
+                                                <h5>Equipment ID: {this.state.equipment_focus.equipment_id}</h5>
                                             </Col>
                                             <Col>
-                                                <h5>Equipment Type: {this.state.type_name}</h5>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col>
-                                                <h5>Contract Type: {this.state.contract_type}</h5>
-                                            </Col>
-                                            <Col>
-                                                <h5>Vendor Name: {this.state.vendor_name}</h5>
+                                                <h5>Equipment Type: {this.state.equipment_focus.type_name}</h5>
                                             </Col>
                                         </Row>
                                         <Row>
                                             <Col>
-                                                <h5>Office: {this.state.office_name}</h5>
+                                                <h5>Contract Type: {this.state.equipment_focus.contract_name}</h5>
+                                            </Col>
+                                            <Col>
+                                                <h5>Vendor Name: {this.state.equipment_focus.vendor_name}</h5>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <h5>Office: {this.state.equipment_focus.office_name}</h5>
                                             </Col>
                                         </Row>
                                     </div>
                             }
                         </Modal.Body>
+                        <Modal.Footer>
+                            <Button onClick={this.handleDelete}>
+                                Delete Item
+                            </Button>
+                        </Modal.Footer>
                     </Modal>
                     <Modal
                         show={this.state.createModalShow}
@@ -328,25 +403,30 @@ class Equipment extends Component {
                             </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <form noValidate onSubmit={this.handleSubmit}>
+                            <form noValidate onSubmit={this.handleCreate}>
                                 <h3>{this.state.error}</h3>
-                                <FormGroup controlId={'equipment_name'} bssize={'large'}>
+                                <FormGroup controlId={'new_equipment_name'} bssize={'large'}>
                                     <h3>Equipment Name</h3>
                                     <FormControl
                                         type={'string'}
-                                        value={this.state.equipment_name}
+                                        value={this.state.new_equipment_name}
                                         onChange={this.handleChange}
                                     />
                                 </FormGroup>
-                                <FormGroup controlId={'equipment_type'} bssize={'large'}>
+                                <FormGroup controlId={'new_equipment_type'} bssize={'large'}>
                                     <h3>Equipment Type</h3>
-                                    <FormControl
-                                        type={'string'}
-                                        value={this.state.equipment_type}
-                                        onChange={this.handleChange}
-                                    />
+                                    <FormControl as={'select'} onChange={this.handleChange}>
+                                        <option value={0}>Make a selection</option>
+                                        {
+                                            this.state.equipment_types.map(type => {
+                                                return(
+                                                    <option key={type.equipment_type_id} value={type.equipment_type_id}>{type.type_name}</option>
+                                                )
+                                            })
+                                        }
+                                    </FormControl>
                                 </FormGroup>
-                                <FormGroup controlId={'contract_type'} bssize={'large'}>
+                                <FormGroup controlId={'new_contract_type'} bssize={'large'}>
                                     <h3>Ownership Type</h3>
                                     <FormControl as={'select'} onChange={this.handleChange}>
                                         {
@@ -363,13 +443,18 @@ class Equipment extends Component {
                                         }
                                     </FormControl>
                                </FormGroup>
-                                <FormGroup controlId={'vendor_name'} bssize={'large'}>
+                                <FormGroup controlId={'new_vendor'} bssize={'large'}>
                                     <h3>Vendor Name</h3>
-                                    <FormControl
-                                        value={this.state.vendor_name}
-                                        onChange={this.handleChange}
-                                        type={"string"}
-                                    />
+                                    <FormControl as={'select'} onChange={this.handleChange}>
+                                        <option value={0}>Make a selection</option>
+                                        {
+                                            this.state.vendors.map(vendor => {
+                                                return(
+                                                    <option key={vendor.vendor_id} value={vendor.vendor_id}>{vendor.vendor_name}</option>
+                                                )
+                                            })
+                                        }
+                                    </FormControl>
                                 </FormGroup>
                                 <FormGroup controlId={'office_id'} bssize={'large'}>
                                     <h3>Select Your Office</h3>
@@ -391,10 +476,12 @@ class Equipment extends Component {
                                     onClick={this.hideCreateModal}>
                                 Close
                             </Button>
-                            <Button variant="primary"
-                            block
-                            bssize={"large"}
-                            type={"submit"}
+                            <Button
+                                variant="primary"
+                                block
+                                bssize={"large"}
+                                type={"submit"}
+                                onClick={this.handleCreate}
                             >
                                 Add Item
                             </Button>
