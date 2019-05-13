@@ -7,6 +7,8 @@ class Reservations extends Component {
 
         this.state = {
             reservation: [],
+            reservation_id: '',
+            reservation_name: [],
             reservation_types: [],
             contract_types: [],
             viewModalShow: false,
@@ -16,7 +18,16 @@ class Reservations extends Component {
             search_field: 'reservation_name',
             reservation_type: '1',
             contract_type: '1',
-            error: ''
+            start_time: '',
+            end_time: '',
+            error: '',
+            new_reservation_name: '',
+            room_id: '',
+            office_name: '',
+            new_start_time: '',
+            new_end_time: '',
+            new_room_id: '',
+            new_office_name: ''
         };
 
         this.openViewModal = (item) => {
@@ -119,7 +130,7 @@ class Reservations extends Component {
                                         type={'string'}
                                         value={this.state.search}
                                         onChange={this.handleChange}
-                                        />
+                                    />
                                 </FormGroup>
                             </Col>
                             <Col>
@@ -145,7 +156,7 @@ class Reservations extends Component {
                         block
                         bssize={'large'}
                         onClick={this.openCreateModal}
-                        >
+                    >
                         Add new Reservation
                     </Button>
                     <table className={"table table-hover"}>
@@ -177,10 +188,53 @@ class Reservations extends Component {
                         </tbody>
                     </table>
                     <Modal
+                        show={this.state.viewModalShow}
+                        onHide={this.state.hideViewModal}
+                        aria-labelledby="contained-modal-title-vcenter"
+                        size={'lg'}
+                        centered
+                    >
+                        <Modal.Header>
+                            <Modal.Title id="contained-modal-title-vcenter">
+                               Reservation View
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            {
+                                    <div>
+                                        <Row>
+                                            <Col>
+                                                <h5>Reservation Name: {this.state.reservation_name}</h5>
+                                            </Col>
+                                            <Col>
+                                                <h5>Reservation ID: {this.state.reservation_id}</h5>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <h5>Start Time: {this.state.start_time}</h5>
+                                            </Col>
+                                            <Col>
+                                                <h5>End Time: {this.state.end_time}</h5>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <h5>Room ID: {this.state.room_id}</h5>
+                                            </Col>
+                                            <Col>
+                                                <h5>Office Name: {this.state.office_name}</h5>
+                                            </Col>
+                                        </Row>
+                                    </div>
+                            }
+                        </Modal.Body>
+                    </Modal>
+                    <Modal
                         show={this.state.createModalShow}
                         onHide={this.hideCreateModal}
                         aria-labelledby="contained-modal-title-vcenter"
-                        size={'lg'}
+                       size={'lg'}
                         centered
                     >
                         <Modal.Header closeButton={true}>
@@ -190,7 +244,51 @@ class Reservations extends Component {
                         </Modal.Header>
                         <Modal.Body>
 
+                            <FormGroup controlId={'new_reservation_name'} bssize={'large'}>
+                                <h3>Reservation Name</h3>
+                                <FormControl
+                                    type={'string'}
+                                    value={this.state.new_reservation_name}
+                                    onChange={this.handleChange}
+                                />
+                            </FormGroup>
+                            <FormGroup controlId={'new_room_id'} bssize={'large'}>
+                                <h3>Room ID</h3>
+                                <FormControl
+                                    type={'string'}
+                                    value={this.state.new_room_id}
+                                    onChange={this.handleChange}
+                                />
+                            </FormGroup>
+                            <FormGroup controlId={'new_start_time'} bssize={'large'}>
+                                <h3>Start Time</h3>
+                                <FormControl
+                                    type={'string'}
+                                   value={this.state.new_start_time}
+                                    onChange={this.handleChange}
+                                />
+                            </FormGroup>
+                            <FormGroup controlId={'new_end_time'} bssize={'large'}>
+                                <h3>End Time</h3>
+                                <FormControl
+                                    type={'string'}
+                                    value={this.state.new_end_time}
+                                    onChange={this.handleChange}
+                                />
+                            </FormGroup>
+
                         </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary"
+                                    onClick={this.hideCreateModal}>
+                                Close
+                            </Button>
+                            <Button variant="primary"
+                                    type={"submit"}
+                                    onClick={this.handleSubmit}>
+                                Add Item
+                            </Button>
+                        </Modal.Footer>
                     </Modal>
                 </div>
             </div>
@@ -198,4 +296,4 @@ class Reservations extends Component {
     }
 }
 
-export default Reservations;
+export default Reservations
