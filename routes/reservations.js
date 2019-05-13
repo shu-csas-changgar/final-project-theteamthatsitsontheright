@@ -1,5 +1,6 @@
 let express = require('express');
 let router = express.Router();
+const mysql = require('mysql');
 
 router.get('/', function(req, res, next) {
     res.render('reservations', {title: 'ABC Corp'});
@@ -19,9 +20,10 @@ router.post('/filter_personal', (req, res, next) => {
                     'USING(equipment_type_id) ' +
                 'INNER JOIN employee ' +
                     'USING(employee_id) ' +
-            'WHERE ' + req.body.search_field + ' = ' + req.body.search +
-                'AND reservation_id >= 0'; 
-    res.locals.connection.query(sql, (error, results, fields) => {
+            'WHERE employee_id = ?';
+    const replaces = [req.body.search];
+    const sql_query = mysql.format(sql, replaces);
+    res.locals.connection.query(sql_query, (error, results, fields) => {
         if (error) {
             throw error;
         } else {

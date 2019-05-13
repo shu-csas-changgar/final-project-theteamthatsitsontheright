@@ -55,15 +55,16 @@ class PersonalDash extends Component {
     render() {
         return (
             <div>
+                <div className={'container'}>
                 Personal Dash of
 
                 <div> {this.state.employee.first_name} {this.state.employee.last_name} </div>
                 <div>
                 <br /> 
                 </div>
-                Current equipment under your name 
+                    <h5>Current equipment under your name</h5>
 
-                <table className={"equipment"}>
+                <table className={"table table-hover"}>
                         <thead>
                         <tr>
                             <th>Equipment Name</th>
@@ -71,7 +72,6 @@ class PersonalDash extends Component {
                             <th>Contract Type</th>
                             <th>Vendor Name</th>
                             <th>Office Name</th>
-                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -95,7 +95,7 @@ class PersonalDash extends Component {
 
                     <div> Reservations under your name </div>
 
-                    <table className={"reservations"}>
+                    <table className={"table table-hover"}>
                         <thead>
                         <tr>
                             <th>Equipment Name</th>
@@ -121,6 +121,7 @@ class PersonalDash extends Component {
                         </tbody>
                     </table>
 
+            </div>
             </div>
         )
     }
