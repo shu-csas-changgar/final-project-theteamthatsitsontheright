@@ -28,6 +28,19 @@ router.post('/new', (req, res, next) => {
     })
 });
 
+router.post('/delete', (req, res, next) => {
+    const sql = 'DELETE FROM reservation WHERE reservation_id = ?';
+    const replaces = [req.body.reservation_id];
+    const sql_query = mysql.format(sql, replaces);
+    res.locals.connection.query(sql_query, (error, results, fields) => {
+        if (error) {
+            throw error;
+        } else {
+            res.json(results);
+        }
+    })
+});
+
 router.post('/filter_personal', (req, res, next) => {
     const sql =
         'SELECT * ' +

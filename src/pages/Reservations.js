@@ -165,6 +165,44 @@ class Reservations extends Component {
         })
     };
 
+    handleDelete = (event) => {
+        event.preventDefault();
+        const data = {
+            reservation_id: this.state.reservation_focus.reservation_id
+        };
+        fetch('reservations/delete', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({ error: 'Bad response from server' })
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ error: data });
+        }).catch((error) => {
+            console.log(error);
+            this.setState({error: error});
+        });
+        // This is used to get a list of the reservations for the table.
+        fetch('/reservations', {
+            method: 'GET'
+        }).then((response) => {
+            if (response.status >= 400) {
+                this.setState({ error: 'Bad response from the server' })
+            }
+            return response.json();
+        }).then((data) => {
+            this.setState({ reservation: data });
+        }).catch((error) => {
+            console.log(error);
+            this.setState({ error: error });
+        });
+        this.componentDidMount();
+        this.hideViewModal();
+    };
+
     render() {
         return (
             <div>
@@ -278,6 +316,11 @@ class Reservations extends Component {
                                     </div>
                             }
                         </Modal.Body>
+                        <Modal.Footer>
+                            <Button onClick={this.handleDelete}>
+                                Delete Item
+                            </Button>
+                        </Modal.Footer>
                     </Modal>
                     <Modal
                         show={this.state.createModalShow}
@@ -328,16 +371,16 @@ class Reservations extends Component {
                             </form>
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="secondary"
-                                    onClick={this.hideCreateModal}>
-                                Close
-                            </Button>
-                            <Button variant="primary"
-                                    type={"submit"}
-                                    disabled={!this.validateForm()}
-                                    onClick={this.handleCreate}>
-                                Add Item
-                            </Button>
+                              <Button variant="secondary"
+                                      onClick={this.hideCreateModal}>
+                                  Close
+                              </Button>
+                              <Button variant="primary"
+                                      type={"submit"}
+                                      disabled={!this.validateForm()}
+                                      onClick={this.handleCreate}>
+                                  Add Item
+                              </Button>
                         </Modal.Footer>
                     </Modal>
                 </div>
